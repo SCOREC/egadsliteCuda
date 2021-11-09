@@ -120,7 +120,7 @@ liteRegQuads.o:	../util/regQuads.c ../util/regQuads.h
 		../util/regQuads.c -o $(ODIR)/liteRegQuads.o
 
 egadsRobust.o:	../src/egadsRobust.c
-	$(CC) -c $(COPTS) $(DEFINE) ../src/egadsRobust.c \
+	$(CC) -c $(COPTS) $(DEFINE) -I. ../src/egadsRobust.c \
 		-o $(ODIR)/egadsRobust.o
 
 # Static analysis
