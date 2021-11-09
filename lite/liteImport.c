@@ -1719,7 +1719,7 @@ EG_readEBody(egObject *context, egObject *mobject, int bindex, int iref,
     if (n != 3) return EGADS_READERR;
     n = Fread(ebody->edges[j].dend,   sizeof(double), 3, fp);
     if (n != 3) return EGADS_READERR;
-    ebody->edges[j].ts = EG_alloc(ebody->edges[j].npts*sizeof(double));
+    ebody->edges[j].ts = (double*) EG_alloc(ebody->edges[j].npts*sizeof(double));
     if (ebody->edges[j].ts == NULL) {
       printf(" EGADS Error: Edge %d Cannot allocate %d ts (EG_importEBody)!\n",
              j+1, ebody->edges[j].npts);
