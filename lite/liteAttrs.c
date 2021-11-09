@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 #ifdef __CUDACC__
-#include "egadsString.h"
+#include "liteString.h"
 #else
 #include <string.h>
 #endif
