@@ -35,6 +35,7 @@ $(LDIR)/libegadslite.so:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
 				liteTessInp.o egadsRobust.o emp.o evaLite.o \
 				ratLite.o liteRegQuads.o liteEffect.o \
 				liteUVmap.o
+	mkdir $(LDIR)
 	touch $(LDIR)/libegadslite.so
 	rm $(LDIR)/libegadslite.so
 	(cd $(ODIR); $(CC) -shared -Wl,-no-undefined \
