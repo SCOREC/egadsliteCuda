@@ -23,7 +23,7 @@ module load gcc mpich cmake cuda/10.2
 ```
 mkdir build
 cd build
-cmake /path/to/source -DCMAKE_CUDA_ARCHITECTURES=75
+cmake /path/to/lite/source/dir -DCMAKE_CUDA_ARCHITECTURES=75
 make -j4
 ```
 
@@ -90,6 +90,8 @@ cd ../
 #edit ESPenv.sh and replace LINUX64 with LINUX64_cuda
 source ESPenv.sh
 ```
+
+Note, the opencascade install is not used, but the `makeEnv` script requires it, AFAIK.
 
 ### build egadslite
 
