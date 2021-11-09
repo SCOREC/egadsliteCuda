@@ -12,6 +12,7 @@ endif
 
 
 $(TDIR)/liteTest:	$(ODIR)/liteTest.o
+	if [ ! -d $(TDIR) ]; then mkdir $(TDIR); fi
 	$(CC) -o $(TDIR)/liteTest $(ODIR)/liteTest.o -L$(LDIR) -legadslite \
 		$(RPATH) -lpthread -lm
 
