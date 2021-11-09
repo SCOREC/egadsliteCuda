@@ -50,6 +50,7 @@ set_target_properties(egadslite PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_compile_definitions(egadslite PUBLIC REVISION=7.5)
  
 add_executable(liteTest liteTest.c)
+set_target_properties(liteTest PROPERTIES LANGUAGE CXX LINKER_LANGUAGE CXX)
  
 set_property(TARGET liteTest PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 target_link_libraries(liteTest PRIVATE egadslite)
