@@ -38,11 +38,16 @@ $(LDIR)/libegadslite.so:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
 	if [ ! -d $(LDIR) ]; then mkdir $(LDIR); fi
 	touch $(LDIR)/libegadslite.so
 	rm $(LDIR)/libegadslite.so
-	(cd $(ODIR); $(CC) -shared \
-		-o $(LDIR)/libegadslite.so $(OBJS) liteTess.o liteTris.o \
+	(cd $(ODIR); $(CC) --compiler-options '-fPIC' -dlink \
+		-o $(LDIR)/libegadslite.dlink.o $(OBJS) liteTess.o liteTris.o \
+		liteQuads.o liteTessInp.o egadsRobust.o emp.o evaLite.o \
+		ratLite.o liteRegQuads.o liteEffect.o liteUVmap.o )
+	(cd $(ODIR); $(CC) --shared \
+		-o $(LDIR)/libegadslite.so $(LDIR)/libegadslite.dlink.o \
+		$(OBJS) liteTess.o liteTris.o \
 		liteQuads.o liteTessInp.o egadsRobust.o emp.o evaLite.o \
 		ratLite.o liteRegQuads.o liteEffect.o liteUVmap.o \
-		-lpthread -lm )
+		-lpthread -lm -lcudart)
 
 $(LDIR)/libegadslite.dylib:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
 				liteTessInp.o egadsRobust.o emp.o evaLite.o \

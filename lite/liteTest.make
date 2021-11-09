@@ -14,7 +14,7 @@ endif
 $(TDIR)/liteTest:	$(ODIR)/liteTest.o
 	if [ ! -d $(TDIR) ]; then mkdir $(TDIR); fi
 	$(CC) -o $(TDIR)/liteTest $(ODIR)/liteTest.o -L$(LDIR) -legadslite \
-		$(RPATH) -lpthread -lm
+		$(RPATH) -lpthread -lm -lcudart
 
 $(ODIR)/liteTest.o:	liteTest.c
 	$(CC) -c $(COPTS) $(DEFINE) -I$(IDIR) liteTest.c -o $(ODIR)/liteTest.o
