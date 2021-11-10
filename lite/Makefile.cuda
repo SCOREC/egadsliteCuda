@@ -112,9 +112,9 @@ emp.o:		../util/emp.c
 	$(CC) -c $(COPTS) $(DEFINE) -D$(ESP_ARCH) -I../include ../util/emp.c \
 		-o $(ODIR)/emp.o
 
-evaLite.o:	../util/evaluate.c
+evaLite.o:	../util/evaluateNR.c
 	$(CC) -c $(COPTS) $(DEFINE) -DLITE -I../include -I. -I../src \
-		../util/evaluate.c -o $(ODIR)/evaLite.o
+		../util/evaluateNR.c -o $(ODIR)/evaLite.o
 
 ratLite.o:	../util/rational.c
 	$(CC) -c $(COPTS) $(DEFINE) -DLITE ../util/rational.c \
