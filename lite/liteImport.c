@@ -2356,6 +2356,10 @@ EG_reallocLiteModel(egObject *mobject)
 }
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int
 EG_importModel(egObject *context, const size_t nbytes, const char *stream,
                egObject **model)
@@ -2507,3 +2511,6 @@ EG_importModel(egObject *context, const size_t nbytes, const char *stream,
 
   return EGADS_SUCCESS;
 }
+#ifdef __cplusplus
+}
+#endif
