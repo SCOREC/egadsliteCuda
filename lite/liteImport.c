@@ -30,25 +30,25 @@ typedef double DOUBLE_2D[2];
 /* #define FULLATTR */
 
 
-  extern int EG_close(egObject *context);
-  extern int EG_initTessBody(egObject *object, egObject **tess);
-  extern int EG_setTessEdge(egObject *tess, int eIndex, int len,
+  extern "C" int EG_close(egObject *context);
+  extern "C" int EG_initTessBody(egObject *object, egObject **tess);
+  extern "C" int EG_setTessEdge(egObject *tess, int eIndex, int len,
                             const double *xyz, const double *t);
-  extern int EG_setTessFace(egObject *tess, int fIndex, int len,
+  extern "C" int EG_setTessFace(egObject *tess, int fIndex, int len,
                             const double *xyz, const double *uv, int ntri,
                             const int *tris);
-  extern int EG_statusTessBody(egObject *tess, egObject **body, int *state,
+  extern "C" int EG_statusTessBody(egObject *tess, egObject **body, int *state,
                                int *npts);
-  extern int EG_objectBodyTopo(const egObject *body, int oclass, int index,
+  extern "C" int EG_objectBodyTopo(const egObject *body, int oclass, int index,
                                egObject **obj);
-  extern int EG_effectNeighbor(egEFace *eface);
+  extern "C" int EG_effectNeighbor(egEFace *eface);
 #ifdef __NVCC__
-  extern int EG_evaluateDev(const egObject *geom_d, const double *param,
+  extern "C" int EG_evaluateDev(const egObject *geom_d, const double *param,
                             double *ev);
-  extern int EG_attributeRetDev(const egObject *obj_d, const char *name,
+  extern "C" int EG_attributeRetDev(const egObject *obj_d, const char *name,
                                 int *atype, int *len, int **ints,
                                 double **reals, char **str);
-  extern int EG_addStrAttrDev(egObject *obj_d, const char *name,
+  extern "C" int EG_addStrAttrDev(egObject *obj_d, const char *name,
                               const char *str);
 #else
   extern int EG_evaluate(const egObject *geom, const double *param, double *ev);
