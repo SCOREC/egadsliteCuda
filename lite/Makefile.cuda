@@ -19,7 +19,7 @@ endif
 VPATH = $(ODIR)
 
 OBJS  = liteBase.o liteMemory.o liteGeom.o liteTopo.o liteAttrs.o liteImport.o \
-	liteString.o
+	liteString.o liteDevice.o
 
 ifeq ($(ESP_ARCH),DARWIN64)
 default:	$(LDIR)/libegadslite.dylib $(LDIR)/libegadslitestatic.a
