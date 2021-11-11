@@ -11,6 +11,7 @@ set(EG_SOURCES
   liteAttrs.c
   liteImport.c
   liteString.c
+  liteDevice.c
   ../src/egadsQuads.c
   ../src/egadsRobust.c
 )
@@ -21,7 +22,7 @@ set(EGLITE_SOURCES
   ../src/egadsTessInp.c
   ../src/egadsEffect.c
   ../src/egadsTessInp.c
-  ../util/evaluate.c
+  ../util/evaluateNR.c
   ../util/rational.c 
   ../util/regQuads.c
   liteUVmap.c
@@ -51,6 +52,4 @@ target_compile_definitions(egadslite PUBLIC REVISION=7.5)
  
 add_executable(liteTest liteTest.c)
 set_target_properties(liteTest PROPERTIES LANGUAGE CXX LINKER_LANGUAGE CXX)
- 
-set_property(TARGET liteTest PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 target_link_libraries(liteTest PRIVATE egadslite)
