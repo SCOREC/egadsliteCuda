@@ -3094,8 +3094,13 @@ EG_inTriExact(double *t1, double *t2, double *t3, double *p, double *w)
   return EGADS_OUTSIDE;
 }
 
+#ifdef __cplusplus
+#define EXTERN_FUNC extern "C"
+#else
+#define EXTERN_FUNC extern
+#endif
 
-extern "C" int
+EXTERN_FUNC int
 EG_baryFrame(egTess2D *tess2d)
 {
   int    i, j, i0, i1, i2, cls;

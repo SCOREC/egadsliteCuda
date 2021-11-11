@@ -29,19 +29,24 @@ typedef double DOUBLE_2D[2];
 /* #define DEBUG    */
 /* #define FULLATTR */
 
+#ifdef __cplusplus
+#define EXTERN_FUNC extern "C"
+#else
+#define EXTERN_FUNC extern
+#endif
 
-  extern "C" int EG_close(egObject *context);
-  extern "C" int EG_initTessBody(egObject *object, egObject **tess);
-  extern "C" int EG_setTessEdge(egObject *tess, int eIndex, int len,
-                            const double *xyz, const double *t);
-  extern "C" int EG_setTessFace(egObject *tess, int fIndex, int len,
-                            const double *xyz, const double *uv, int ntri,
-                            const int *tris);
-  extern "C" int EG_statusTessBody(egObject *tess, egObject **body, int *state,
-                               int *npts);
-  extern "C" int EG_objectBodyTopo(const egObject *body, int oclass, int index,
-                               egObject **obj);
-  extern "C" int EG_effectNeighbor(egEFace *eface);
+  EXTERN_FUNC int EG_close(egObject *context);
+  EXTERN_FUNC int EG_initTessBody(egObject *object, egObject **tess);
+  EXTERN_FUNC int EG_setTessEdge(egObject *tess, int eIndex, int len,
+                             const double *xyz, const double *t);
+  EXTERN_FUNC int EG_setTessFace(egObject *tess, int fIndex, int len,
+                             const double *xyz, const double *uv, int ntri,
+                             const int *tris);
+  EXTERN_FUNC int EG_statusTessBody(egObject *tess, egObject **body, int *state,
+                                int *npts);
+  EXTERN_FUNC int EG_objectBodyTopo(const egObject *body, int oclass, int index,
+                                egObject **obj);
+  EXTERN_FUNC int EG_effectNeighbor(egEFace *eface);
 #ifdef __NVCC__
   extern "C" int EG_evaluateDev(const egObject *geom_d, const double *param,
                             double *ev);
