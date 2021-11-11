@@ -21,7 +21,7 @@ WARNINGS =
 DEFINE   = -DREVISION=$(CASREV)
 CXX      = g++ -m64 -g $(ESPFLAGS)
 CPPOPT   = -O -fPIC -DLIN -DLININTEL -DCSFDB -DOCC_CONVERT_SIGNALS -D_GNU_SOURCE=1 -D_OCC64 -DNDEBUG -DNo_Exception -DHAVE_CONFIG_H $(WARNINGS) $(CPDS)
-CC       = nvcc -arch=sm_75 $(ESPFLAGS)
+CC       = nvcc -g -arch=sm_75 $(ESPFLAGS)
 COPTS    = -rdc=true -x cu --compiler-options '-fPIC' $(WARNINGS)
 OCOPT    = -O -fno-unit-at-a-time -fPIC $(WARNINGS)
 ifeq ($(EFCOMP),gfortran)
