@@ -5,7 +5,7 @@ IDIR  = $(ESP_ROOT)/include
 ifdef ESP_BLOC
 ODIR  = $(ESP_BLOC)/obj
 else
-ODIR  = .
+ODIR  = $(ESP_ROOT)/obj_cuda
 endif
 
 # allow for clang static analyzer
@@ -31,11 +31,14 @@ default:	$(LDIR)/libegadslite.so    $(LDIR)/libegadslitestatic.a
 endif
 endif
 
-$(LDIR)/libegadslite.so:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
+setup:
+	if [ ! -d $(ODIR) ]; then mkdir $(ODIR); fi
+	if [ ! -d $(LDIR) ]; then mkdir $(LDIR); fi
+
+$(LDIR)/libegadslite.so:	setup $(OBJS) liteTess.o liteTris.o liteQuads.o \
 				liteTessInp.o egadsRobust.o emp.o evaLite.o \
 				ratLite.o liteRegQuads.o liteEffect.o \
 				liteUVmap.o
-	if [ ! -d $(LDIR) ]; then mkdir $(LDIR); fi
 	touch $(LDIR)/libegadslite.so
 	rm $(LDIR)/libegadslite.so
 	(cd $(ODIR); $(CC) --compiler-options '-fPIC' -dlink \
