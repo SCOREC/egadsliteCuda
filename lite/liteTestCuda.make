@@ -6,7 +6,7 @@ ifdef ESP_BLOC
 ODIR = $(ESP_BLOC)/obj
 TDIR = $(ESP_BLOC)/test
 else
-ODIR = .
+ODIR = $(ESP_ROOT)/obj_cuda
 TDIR = $(ESP_ROOT)/bin
 endif
 
