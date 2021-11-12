@@ -10,6 +10,7 @@
  */
 
 #include "egads.h"
+#include <assert.h>
 
 #ifdef WIN32
 #define LONG long long
@@ -394,6 +395,17 @@ parseOut(int level, ego object, /*@null@*/ ego body, int sense)
 
 }
 
+#ifdef __CUDACC__
+__global__ void getTopo(ego model, ego geom, int& oclass, int& mtype,
+                        int& nbodies, ego* bodies, int** senses){
+  printf("Hello World from GPU!\n");
+  const int mymagic = model->magicnumber;
+  printf("cuda topo magicnum %d magic %d\n", mymagic, MAGIC);
+  int stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies, &bodies, senses);
+  printf("stat %d oclass %d mtype %d nbodies %d\n", stat, oclass, mtype, nbodies);
+}
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -409,10 +421,14 @@ int main(int argc, char *argv[])
   printf(" EG_open          = %d\n", EG_open(&context));
   printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
                                                       &model), argv[1]);
-  
+#ifdef __NVCC__
+  getTopo<<<1,1>>>(model, geom, oclass, mtype, nbodies, bodies, &senses);
+  assert(cudaDeviceSynchronize());
+#else
   /* test bodyTopo functions */
   stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies,
                         &bodies, &senses);
+#endif
   if (stat == EGADS_SUCCESS)
     for (i = 0; i < nbodies; i++) {
       stat = EG_getBodyTopos(bodies[i], NULL, NODE, &n, &objs);
