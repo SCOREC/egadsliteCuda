@@ -416,7 +416,6 @@ __global__ void getTopo_d(ego model) {
       }
       for ( j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
-        printf("got index %d\n", k);
         if (k != j+1) printf("  Node Index = %d but should be %d!\n", k, j+1);
       }
       EG_free(objs);
@@ -424,6 +423,8 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: %d Edge EG_getBodyTopos = %d!\n", i, stat);
         continue;
+      } else {
+        printf("%d EDGE EG_getBodyTopos %d\n", i, n);
       }
       for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
@@ -434,6 +435,8 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: %d Loop EG_getBodyTopos = %d!\n", i, stat);
         continue;
+      } else {
+        printf("%d LOOP EG_getBodyTopos %d\n", i, n);
       }
       for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
@@ -442,12 +445,16 @@ __global__ void getTopo_d(ego model) {
         if (stat != EGADS_SUCCESS) {
           printf("  Loop Index = %d GetNodes = %d\n", j+1, stat);
           continue;
+        } else {
+          printf("%d LOOP::NODE EG_getBodyTopos %d\n", j, n);
         }
         EG_free(nobjs);
         stat = EG_getBodyTopos(bodies[i], objs[j], FACE, &nn, &nobjs);
         if (stat != EGADS_SUCCESS) {
           printf("  Loop Index = %d GetFaces = %d\n", j+1, stat);
           continue;
+        } else {
+          printf("%d LOOP::FACE EG_getBodyTopos %d\n", j, n);
         }
         EG_free(nobjs);
       }
@@ -456,6 +463,8 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: Face %d EG_getBodyTopos = %d!\n", i, stat);
         continue;
+      } else {
+        printf("%d FACE EG_getBodyTopos %d\n", i, n);
       }
       for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
@@ -466,6 +475,8 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: Shell %d EG_getBodyTopos = %d!\n", i, stat);
         continue;
+      } else {
+        printf("%d SHELL EG_getBodyTopos %d\n", i, n);
       }
       if (objs != NULL) {
         for (j = 0; j < n; j++) {
