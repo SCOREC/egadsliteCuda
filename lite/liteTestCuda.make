@@ -16,8 +16,8 @@ $(TDIR)/liteTest:	$(ODIR)/liteTest.o
 	$(CC) -o $(TDIR)/liteTest.cuda $(ODIR)/liteTest.o $(LDIR)/libegadslitestaticCuda.a \
 		$(RPATH) -lpthread -lm -lcudart
 
-$(ODIR)/liteTest.o:	liteTest.c
-	$(CC) -c $(COPTS) $(DEFINE) -I$(IDIR) liteTest.c -o $(ODIR)/liteTest.o
+$(ODIR)/liteTest.o:	liteTestCuda.c
+	$(CC) -c $(COPTS) $(DEFINE) -I$(IDIR) liteTestCuda.c -o $(ODIR)/liteTest.o
 
 clean:
 	-rm $(ODIR)/liteTest.o
