@@ -424,6 +424,7 @@ int main(int argc, char *argv[])
 #ifdef __NVCC__
   getTopo<<<1,1>>>(model, geom, oclass, mtype, nbodies, bodies, &senses);
   assert(cudaDeviceSynchronize());
+  printf("done getTopo %d\n", nbodies);
 #else
   /* test bodyTopo functions */
   stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies,
