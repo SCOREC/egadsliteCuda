@@ -652,9 +652,11 @@ EG_readBody(egObject *context, egObject *mobject, int bindex, stream_T *fp)
   int          i, j, m, n, stat, mtype, iref, ntypes[8];
   double       t, d, x0[2], x1[2], data[6];
   int          atype, alen;
+#ifndef __NVCC__
   const int    *ints;
   const double *reals;
   const char   *str;
+#endif
   egObject     *obj, *bobj, *pcobj;
   liteGeometry *lgeom;
   liteNode     *lnode;

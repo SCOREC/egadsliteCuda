@@ -388,8 +388,8 @@ EG_recClose2Edge(int t0, double *xyz, int depth, triStruct *ts)
 
   tn = ts->tris[t0].neighbors[0];
   if (tn <= 0) {
-    if ((dist = EG_getIntersect(ts->verts[i1].xyz, ts->verts[i2].xyz, xyz)) < 
-        ts->edist2) {
+    dist = EG_getIntersect(ts->verts[i1].xyz, ts->verts[i2].xyz, xyz);
+    if (dist < ts->edist2) {
 #ifdef DEBUG
       printf(" dist = %le, edist = %le\n", dist, ts->edist2);
 #endif
@@ -1014,7 +1014,7 @@ EG_fillMid(int t1, int close, triStruct *ts)
 
 
 __HOST_AND_DEVICE__ static void
-EG_swapTris(int (*test)(int, int, int, triStruct *), /*@unused@*/ char *string, 
+EG_swapTris(int (*test)(int, int, int, triStruct *), /*@unused@*/ const char *string, 
             double start, triStruct *ts)
 {
   int swap, t1, t2, side, i, i0, i1, i2, i3, n11, n12, n21, n22, os, count;
