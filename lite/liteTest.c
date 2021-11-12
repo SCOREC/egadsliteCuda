@@ -10,7 +10,6 @@
  */
 
 #include "egads.h"
-#include <assert.h>
 
 #ifdef WIN32
 #define LONG long long
@@ -395,26 +394,33 @@ parseOut(int level, ego object, /*@null@*/ ego body, int sense)
 
 }
 
-#ifdef __CUDACC__
-__global__ void getTopo_d(ego model) {
-  const int mymagic = model->magicnumber;
-  printf("cuda topo magicnum %d magic %d\n", mymagic, MAGIC);
-  ego geom, *bodies, *nobjs;
-  int oclass, mtype, nbodies, *senses;
-  int stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies, &bodies, &senses);
-  if (stat == EGADS_SUCCESS) {
-    printf("stat %d oclass %d mtype %d nbodies %d\n", stat, oclass, mtype, nbodies);
-    for (int i = 0; i < nbodies; i++) {
-      int n, j, k, nn;
-      ego    *objs;
+
+int main(int argc, char *argv[])
+{
+  int    i, j, k, n, nn, stat, oclass, mtype, nbodies, *senses;
+  double box[6], params[3], size;
+  ego    context, model, geom, obj, top, prev, next, *bodies, *objs, *nobjs;
+  
+  if (argc != 2) {
+    printf(" Usage: liteTest liteFile\n\n");
+    exit(EXIT_FAILURE);
+  }
+  /* initialize */
+  printf(" EG_open          = %d\n", EG_open(&context));
+  printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
+                                                      &model), argv[1]);
+  
+  /* test bodyTopo functions */
+  stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies,
+                        &bodies, &senses);
+  if (stat == EGADS_SUCCESS)
+    for (i = 0; i < nbodies; i++) {
       stat = EG_getBodyTopos(bodies[i], NULL, NODE, &n, &objs);
-      if (stat == EGADS_SUCCESS) {
-        printf("%d Node EG_getBodyTopos %d\n", i, n);
-      } else {
+      if (stat != EGADS_SUCCESS) {
         printf(" ERROR: %d Node EG_getBodyTopos = %d!\n", i, stat);
         continue;
       }
-      for ( j = 0; j < n; j++) {
+      for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
         if (k != j+1) printf("  Node Index = %d but should be %d!\n", k, j+1);
       }
@@ -423,8 +429,6 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: %d Edge EG_getBodyTopos = %d!\n", i, stat);
         continue;
-      } else {
-        printf("%d EDGE EG_getBodyTopos %d\n", i, n);
       }
       for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
@@ -435,8 +439,6 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: %d Loop EG_getBodyTopos = %d!\n", i, stat);
         continue;
-      } else {
-        printf("%d LOOP EG_getBodyTopos %d\n", i, n);
       }
       for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
@@ -445,16 +447,12 @@ __global__ void getTopo_d(ego model) {
         if (stat != EGADS_SUCCESS) {
           printf("  Loop Index = %d GetNodes = %d\n", j+1, stat);
           continue;
-        } else {
-          printf("%d LOOP::NODE EG_getBodyTopos %d\n", j, n);
         }
         EG_free(nobjs);
         stat = EG_getBodyTopos(bodies[i], objs[j], FACE, &nn, &nobjs);
         if (stat != EGADS_SUCCESS) {
           printf("  Loop Index = %d GetFaces = %d\n", j+1, stat);
           continue;
-        } else {
-          printf("%d LOOP::FACE EG_getBodyTopos %d\n", j, n);
         }
         EG_free(nobjs);
       }
@@ -463,8 +461,6 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: Face %d EG_getBodyTopos = %d!\n", i, stat);
         continue;
-      } else {
-        printf("%d FACE EG_getBodyTopos %d\n", i, n);
       }
       for (j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
@@ -475,8 +471,6 @@ __global__ void getTopo_d(ego model) {
       if (stat != EGADS_SUCCESS) {
         printf(" ERROR: Shell %d EG_getBodyTopos = %d!\n", i, stat);
         continue;
-      } else {
-        printf("%d SHELL EG_getBodyTopos %d\n", i, n);
       }
       if (objs != NULL) {
         for (j = 0; j < n; j++) {
@@ -486,53 +480,8 @@ __global__ void getTopo_d(ego model) {
         EG_free(objs);
       }
     }
-    printf(" \n");
-  } // EG_getTopology success
-} // end getTopo
-#endif
-
-void checkCudaError(int line) {
-#ifdef __NVCC__
-  cudaError_t code = cudaDeviceSynchronize();
-  const char * errorMessage = cudaGetErrorString(code);
-  if( code != cudaSuccess ) {
-    fprintf(stderr, "CUDA error on line %d Error code: %d (%s)\n", line, code, errorMessage);
-  }
-  assert(code == cudaSuccess);
-#endif
-}
-
-int main(int argc, char *argv[])
-{
-  int    i, j, k, n, nn, stat, oclass, mtype, nbodies, *senses;
-  double box[6], params[3], size;
-  ego    context, model, geom, obj, top, prev, next, *bodies, *objs, *nobjs;
-#ifdef __NVCC__
-  cudaError_t cudaStatus = cudaSetDevice(0);
-  if (cudaStatus != cudaSuccess) {
-    fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
-    exit(EXIT_FAILURE);
-  }
-  checkCudaError(__LINE__);
-#endif
+  printf(" \n");
   
-  if (argc != 2) {
-    printf(" Usage: liteTest liteFile\n\n");
-    exit(EXIT_FAILURE);
-  }
-  /* initialize */
-  printf(" EG_open          = %d\n", EG_open(&context));
-  printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
-                                                      &model), argv[1]);
-#ifdef __NVCC__
-  getTopo_d<<<1,1>>>(model);
-  checkCudaError(__LINE__);
-  printf("done getTopo\n");
-  return 0;
-#endif
-
-  //TODO move the following functions into a kernel function
-
   /* output the entire model structure */
   parseOut(0, model, NULL, 0);
   printf(" \n");
