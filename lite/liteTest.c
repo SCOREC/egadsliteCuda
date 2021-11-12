@@ -62,17 +62,17 @@ parseOut(int level, ego object, /*@null@*/ ego body, int sense)
   ego    geom, *objs, *edges, *faces;
   double limits[4], bbox[6], *rvec;
   LONG   pointer;
-  static char *classType[36] = {"CONTEXT", "TRANSFORM", "TESSELLATION",
+  static const char *classType[36] = {"CONTEXT", "TRANSFORM", "TESSELLATION",
                                 "NIL", "EMPTY", "REFERENCE", "", "",
                                 "", "", "PCURVE", "CURVE", "SURFACE", "",
                                 "", "", "", "", "", "", "NODE",
                                 "EGDE", "LOOP", "FACE", "SHELL",
                                 "BODY", "MODEL", "", "", "", "", "EEDGE",
                                 "ELOOP", "EFACE", "ESHELL", "EBODY"};
-  static char *curvType[9] = {"Line", "Circle", "Ellipse", "Parabola",
+  static const char *curvType[9] = {"Line", "Circle", "Ellipse", "Parabola",
                               "Hyperbola", "Trimmed", "Bezier", "BSpline", 
                               "Offset"};
-  static char *surfType[11] = {"Plane", "Spherical", "Cylinder", "Revolution",
+  static const char *surfType[11] = {"Plane", "Spherical", "Cylinder", "Revolution",
                                "Toroidal", "Trimmed" , "Bezier", "BSpline", 
                                "Offset", "Conical", "Extrusion"};
   
