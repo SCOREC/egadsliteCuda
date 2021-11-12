@@ -36,13 +36,13 @@ make -f Makefile.cuda
 ### build liteTest
 
 ```
-make -f liteTest.cuda clean
-make -f liteTest.cuda
+make -f liteTestCuda.make clean
+make -f liteTestCuda.make
 ```
 
 ### run liteTest
 
-Expected output (from host build)
+Expected output from liteTest (host build)
 
 ```
 $ ../bin/liteTest.host ../examples/box.egadslite 
@@ -60,7 +60,7 @@ MODEL 1fc9150 0
 ...
 ```
 
-Executing the cuda build of liteTest results in a segfault after loading a box model:
+Executing `liteTestCuda` currently produces the following output:
 
 ```
 $ ./bin/liteTest examples/box.egadslite
@@ -69,27 +69,26 @@ allocating new strings
 copying strings
 have new context
  EG_open          = 0
- EG_loadModel     = 0  examples/box.egadslite
-Segmentation fault (core dumped) 
+ EG_loadModel     = 0  ../examples/box.egadslite
+cuda topo magicnum 98789 magic 98789
+stat 0 oclass 26 mtype 0 nbodies 1
+0 Node EG_getBodyTopos 8
+0 EDGE EG_getBodyTopos 12
+0 LOOP EG_getBodyTopos 6
+0 LOOP::NODE EG_getBodyTopos 6
+0 LOOP::FACE EG_getBodyTopos 6
+1 LOOP::NODE EG_getBodyTopos 6
+1 LOOP::FACE EG_getBodyTopos 6
+2 LOOP::NODE EG_getBodyTopos 6
+2 LOOP::FACE EG_getBodyTopos 6
+3 LOOP::NODE EG_getBodyTopos 6
+3 LOOP::FACE EG_getBodyTopos 6
+4 LOOP::NODE EG_getBodyTopos 6
+4 LOOP::FACE EG_getBodyTopos 6
+5 LOOP::NODE EG_getBodyTopos 6
+5 LOOP::FACE EG_getBodyTopos 6
+0 FACE EG_getBodyTopos 6
+0 SHELL EG_getBodyTopos 1
+
+done getTopo
 ```
-
-`gdb` indicates that the segfault occurs when the host (cpu) calls
-`EG_getTopology(...)` and attempts to access a member of the model
-(`topo->magicnumber`).  Prior to this call, the model object pointer
-is returned from a host call to `EG_loadModel(...)`.
-`EG_loadModel(...) calls `EG_importModel(...)`, which after loading the model, calls:
-
-```
-EG_SET_OBJECT_PTR(&(context->topObj), &obj);
-*model = obj;
-```
-
-`EG_SET_OBJECT_PTR(...)` is a macro which sets a pointer stored on the device, the first
-argument, to an address stored in a pointer on the host, the second argument.
-Note, at this point in `EG_importModel` `obj` is a pointer to the model on the
-device which was created from a pointer to the model on the host, `obj_h`.  As
-expected, accessing `obj_h->magicnumber` is successful.
-
-Should `EG_getTopology` be called on the device (from a cuda kernel) or should
-the model object be copied to the host prior to the `EG_getTopology` call?
-
