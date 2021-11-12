@@ -23,7 +23,7 @@ void uvmap_message (char *Text) {
 
 // Write a message to standard error and a file if specified.
 
-void uvmap_error_message (char *Text) {
+void uvmap_error_message (const char *Text) {
   fprintf (stderr, "%s\n", Text);
   fflush (stderr);
   if (UVMAP_Output_File) {

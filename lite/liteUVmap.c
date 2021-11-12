@@ -168,7 +168,7 @@ uvmap_struct_set_srch_data(INT_ index, INT_ isrch, INT_ ibface,
 }
 
 
-__HOST_AND_DEVICE__ void uvmap_error_message(char *Text)
+__HOST_AND_DEVICE__ void uvmap_error_message(const char *Text)
 {
 #ifdef __CUDACC__
   printf("%s\n", Text);
