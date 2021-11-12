@@ -27,7 +27,7 @@ else
 ifeq ($(ESP_ARCH),DARWINM1)
 default:	$(LDIR)/libegadslite.dylib $(LDIR)/libegadslitestatic.a
 else
-default:	$(LDIR)/libegadslite.so    $(LDIR)/libegadslitestatic.a
+default:	$(LDIR)/libegadsliteCuda.so    $(LDIR)/libegadslitestaticCuda.a
 endif
 endif
 
@@ -35,18 +35,18 @@ setup:
 	if [ ! -d $(ODIR) ]; then mkdir $(ODIR); fi
 	if [ ! -d $(LDIR) ]; then mkdir $(LDIR); fi
 
-$(LDIR)/libegadslite.so:	setup $(OBJS) liteTess.o liteTris.o liteQuads.o \
+$(LDIR)/libegadsliteCuda.so:	setup $(OBJS) liteTess.o liteTris.o liteQuads.o \
 				liteTessInp.o egadsRobust.o emp.o evaLite.o \
 				ratLite.o liteRegQuads.o liteEffect.o \
 				liteUVmap.o
-	touch $(LDIR)/libegadslite.so
-	rm $(LDIR)/libegadslite.so
+	touch $(LDIR)/libegadsliteCuda.so
+	rm $(LDIR)/libegadsliteCuda.so
 	(cd $(ODIR); $(CC) --compiler-options '-fPIC' -dlink \
 		-o $(LDIR)/libegadslite.dlink.o $(OBJS) liteTess.o liteTris.o \
 		liteQuads.o liteTessInp.o egadsRobust.o emp.o evaLite.o \
 		ratLite.o liteRegQuads.o liteEffect.o liteUVmap.o )
 	(cd $(ODIR); $(CC) --shared \
-		-o $(LDIR)/libegadslite.so $(LDIR)/libegadslite.dlink.o \
+		-o $(LDIR)/libegadsliteCuda.so $(LDIR)/libegadslite.dlink.o \
 		$(OBJS) liteTess.o liteTris.o \
 		liteQuads.o liteTessInp.o egadsRobust.o emp.o evaLite.o \
 		ratLite.o liteRegQuads.o liteEffect.o liteUVmap.o \
@@ -65,13 +65,13 @@ $(LDIR)/libegadslite.dylib:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
 		-undefined error -install_name '@rpath/libegadslite.dylib' \
                 -current_version $(EGREV) )
 
-$(LDIR)/libegadslitestatic.a:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
+$(LDIR)/libegadslitestaticCuda.a:	$(OBJS) liteTess.o liteTris.o liteQuads.o \
 				liteTessInp.o egadsRobust.o emp.o evaLite.o \
 				ratLite.o liteRegQuads.o liteEffect.o \
 				liteUVmap.o
-	touch $(LDIR)/libegadslitestatic.a
-	rm $(LDIR)/libegadslitestatic.a
-	(cd $(ODIR); ar $(LOPTS) $(LDIR)/libegadslitestatic.a $(OBJS) \
+	touch $(LDIR)/libegadslitestaticCuda.a
+	rm $(LDIR)/libegadslitestaticCuda.a
+	(cd $(ODIR); ar $(LOPTS) $(LDIR)/libegadslitestaticCuda.a $(OBJS) \
                 liteTess.o liteTris.o liteQuads.o liteTessInp.o egadsRobust.o \
 		emp.o evaLite.o ratLite.o liteRegQuads.o liteEffect.o \
 		liteUVmap.o ; $(RANLB) )
