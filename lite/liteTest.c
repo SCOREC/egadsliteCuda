@@ -396,49 +396,27 @@ parseOut(int level, ego object, /*@null@*/ ego body, int sense)
 }
 
 #ifdef __CUDACC__
-__global__ void getTopo(ego model, ego geom, int& oclass, int& mtype,
-                        int& nbodies, ego* bodies, int** senses){
-  printf("Hello World from GPU!\n");
+__global__ void getTopo_d(ego model) {
   const int mymagic = model->magicnumber;
   printf("cuda topo magicnum %d magic %d\n", mymagic, MAGIC);
-  int stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies, &bodies, senses);
-  printf("stat %d oclass %d mtype %d nbodies %d\n", stat, oclass, mtype, nbodies);
-}
-#endif
-
-
-int main(int argc, char *argv[])
-{
-  int    i, j, k, n, nn, stat, oclass, mtype, nbodies, *senses;
-  double box[6], params[3], size;
-  ego    context, model, geom, obj, top, prev, next, *bodies, *objs, *nobjs;
-  
-  if (argc != 2) {
-    printf(" Usage: liteTest liteFile\n\n");
-    exit(EXIT_FAILURE);
-  }
-  /* initialize */
-  printf(" EG_open          = %d\n", EG_open(&context));
-  printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
-                                                      &model), argv[1]);
-#ifdef __NVCC__
-  getTopo<<<1,1>>>(model, geom, oclass, mtype, nbodies, bodies, &senses);
-  assert(cudaDeviceSynchronize());
-  printf("done getTopo %d\n", nbodies);
-#else
-  /* test bodyTopo functions */
-  stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies,
-                        &bodies, &senses);
-#endif
-  if (stat == EGADS_SUCCESS)
-    for (i = 0; i < nbodies; i++) {
+  ego geom, *bodies, *nobjs;
+  int oclass, mtype, nbodies, *senses;
+  int stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies, &bodies, &senses);
+  if (stat == EGADS_SUCCESS) {
+    printf("stat %d oclass %d mtype %d nbodies %d\n", stat, oclass, mtype, nbodies);
+    for (int i = 0; i < nbodies; i++) {
+      int n, j, k, nn;
+      ego    *objs;
       stat = EG_getBodyTopos(bodies[i], NULL, NODE, &n, &objs);
-      if (stat != EGADS_SUCCESS) {
+      if (stat == EGADS_SUCCESS) {
+        printf("%d Node EG_getBodyTopos %d\n", i, n);
+      } else {
         printf(" ERROR: %d Node EG_getBodyTopos = %d!\n", i, stat);
         continue;
       }
-      for (j = 0; j < n; j++) {
+      for ( j = 0; j < n; j++) {
         k = EG_indexBodyTopo(bodies[i], objs[j]);
+        printf("got index %d\n", k);
         if (k != j+1) printf("  Node Index = %d but should be %d!\n", k, j+1);
       }
       EG_free(objs);
@@ -497,8 +475,53 @@ int main(int argc, char *argv[])
         EG_free(objs);
       }
     }
-  printf(" \n");
+    printf(" \n");
+  } // EG_getTopology success
+} // end getTopo
+#endif
+
+void checkCudaError(int line) {
+#ifdef __NVCC__
+  cudaError_t code = cudaDeviceSynchronize();
+  const char * errorMessage = cudaGetErrorString(code);
+  if( code != cudaSuccess ) {
+    fprintf(stderr, "CUDA error on line %d Error code: %d (%s)\n", line, code, errorMessage);
+  }
+  assert(code == cudaSuccess);
+#endif
+}
+
+int main(int argc, char *argv[])
+{
+  int    i, j, k, n, nn, stat, oclass, mtype, nbodies, *senses;
+  double box[6], params[3], size;
+  ego    context, model, geom, obj, top, prev, next, *bodies, *objs, *nobjs;
+#ifdef __NVCC__
+  cudaError_t cudaStatus = cudaSetDevice(0);
+  if (cudaStatus != cudaSuccess) {
+    fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
+    exit(EXIT_FAILURE);
+  }
+  checkCudaError(__LINE__);
+#endif
   
+  if (argc != 2) {
+    printf(" Usage: liteTest liteFile\n\n");
+    exit(EXIT_FAILURE);
+  }
+  /* initialize */
+  printf(" EG_open          = %d\n", EG_open(&context));
+  printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
+                                                      &model), argv[1]);
+#ifdef __NVCC__
+  getTopo_d<<<1,1>>>(model);
+  checkCudaError(__LINE__);
+  printf("done getTopo\n");
+  return 0;
+#endif
+
+  //TODO move the following functions into a kernel function
+
   /* output the entire model structure */
   parseOut(0, model, NULL, 0);
   printf(" \n");
