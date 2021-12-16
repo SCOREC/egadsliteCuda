@@ -63,7 +63,7 @@ MODEL 1fc9150 0
 Executing `liteTestCuda` currently produces the following output:
 
 ```
-$ ./bin/liteTest examples/box.egadslite
+$ ./bin/liteTest.cuda examples/box.egadslite
 allocating new context
 allocating new strings
 copying strings
@@ -89,6 +89,7 @@ stat 0 oclass 26 mtype 0 nbodies 1
 5 LOOP::FACE EG_getBodyTopos 6
 0 FACE EG_getBodyTopos 6
 0 SHELL EG_getBodyTopos 1
-
+ 
+ Object Scan      = 54 35
 done getTopo
 ```
