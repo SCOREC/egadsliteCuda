@@ -396,10 +396,12 @@ parseOut(int level, ego object, /*@null@*/ ego body, int sense)
 }
 
 #ifdef __CUDACC__
-__global__ void getTopo_d(ego model) {
+__global__ void getTopo_d(ego context, ego model) {
   const int mymagic = model->magicnumber;
   printf("cuda topo magicnum %d magic %d\n", mymagic, MAGIC);
+  double box[6], params[3], size;
   ego geom, *bodies, *nobjs;
+  ego obj, top, prev, next;
   int oclass, mtype, nbodies, *senses;
   int stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies, &bodies, &senses);
   if (stat == EGADS_SUCCESS) {
@@ -488,6 +490,40 @@ __global__ void getTopo_d(ego model) {
     }
     printf(" \n");
   } // EG_getTopology success
+
+  /* tessellate any Bodies or EBodies */
+  if (nbodies < mtype) nbodies = mtype;
+  for (int i = 0; i < nbodies; i++) {
+    stat = EG_getInfo(bodies[i], &oclass, &mtype, &top, &prev, &next);
+    if (stat != EGADS_SUCCESS) continue;
+    stat = EG_getBoundingBox(bodies[i], box);
+    if (stat != EGADS_SUCCESS) continue;
+    size = box[3]-box[0];
+    if (size < box[4]-box[1]) size = box[4]-box[1];
+    if (size < box[5]-box[2]) size = box[5]-box[2];
+    params[0] =  0.025*size;
+    params[1] =  0.001*size;
+    params[2] = 15.0;
+    //printf("before Tessellation of Body %d = %d\n", i+1, stat);
+    //stat = EG_makeTessBody(bodies[i], params, &obj); //FIXME cuda illegal memory access 
+    //printf(" Tessellation of Body %d = %d\n", i+1, stat);
+    //if (stat == EGADS_SUCCESS) EG_deleteObject(obj);
+  }
+  
+  /* scan through the objects */
+  obj = context;
+  int nn=0, n=0;
+  while (obj != NULL) {
+    stat = EG_getInfo(obj, &oclass, &mtype, &top, &prev, &next);
+    if (stat != EGADS_SUCCESS) {
+      printf(" EG_getInfo %d = %d\n", n+1, stat);
+      break;
+    }
+    n++;
+    if (oclass >= NODE) nn++;
+    obj = next;
+  }
+  printf(" Object Scan      = %d %d\n", n, nn);
 } // end getTopo
 #endif
 
@@ -504,9 +540,7 @@ void checkCudaError(int line) {
 
 int main(int argc, char *argv[])
 {
-  int    i, j, k, n, nn, stat, oclass, mtype, nbodies, *senses;
-  double box[6], params[3], size;
-  ego    context, model, geom, obj, top, prev, next, *bodies, *objs, *nobjs;
+  ego    context, model;
 #ifdef __NVCC__
   cudaError_t cudaStatus = cudaSetDevice(0);
   if (cudaStatus != cudaSuccess) {
@@ -525,7 +559,7 @@ int main(int argc, char *argv[])
   printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
                                                       &model), argv[1]);
 #ifdef __NVCC__
-  getTopo_d<<<1,1>>>(model);
+  getTopo_d<<<1,1>>>(context, model);
   checkCudaError(__LINE__);
   printf("done getTopo\n");
   return 0;
@@ -536,40 +570,6 @@ int main(int argc, char *argv[])
   /* output the entire model structure */
   parseOut(0, model, NULL, 0);
   printf(" \n");
-  
-  /* tessellate any Bodies or EBodies */
-  if (nbodies < mtype) nbodies = mtype;
-  for (i = 0; i < nbodies; i++) {
-    stat = EG_getInfo(bodies[i], &oclass, &mtype, &top, &prev, &next);
-    if (stat != EGADS_SUCCESS) continue;
-    stat = EG_getBoundingBox(bodies[i], box);
-    if (stat != EGADS_SUCCESS) continue;
-                              size = box[3]-box[0];
-    if (size < box[4]-box[1]) size = box[4]-box[1];
-    if (size < box[5]-box[2]) size = box[5]-box[2];
-    params[0] =  0.025*size;
-    params[1] =  0.001*size;
-    params[2] = 15.0;
-    stat = EG_makeTessBody(bodies[i], params, &obj);
-    printf(" Tessellation of Body %d = %d\n", i+1, stat);
-    if (stat == EGADS_SUCCESS) EG_deleteObject(obj);
-  }
-  
-  /* scan through the objects */
-  obj = context;
-  nn  = n = 0;
-  while (obj != NULL) {
-    stat = EG_getInfo(obj, &oclass, &mtype, &top, &prev, &next);
-    if (stat != EGADS_SUCCESS) {
-      printf(" EG_getInfo %d = %d\n", n+1, stat);
-      break;
-    }
-    n++;
-    if (oclass >= NODE) nn++;
-    obj = next;
-  }
-  printf(" Object Scan      = %d %d\n", n, nn);
-
-  printf(" EG_close         = %d\n", EG_close(context));
+    printf(" EG_close         = %d\n", EG_close(context));
   return 0;
 }
