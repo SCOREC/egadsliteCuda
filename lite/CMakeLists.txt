@@ -5,6 +5,12 @@ include(GNUInstallDirs)
  
 include(CTest)
 
+set(EG_HEADERS
+  ../include/egads.h
+  ../include/egadsTypes.h
+  ../include/egadsErrors.h
+)
+
 set(EG_SOURCES 
   liteBase.c
   liteMemory.c
@@ -57,6 +63,6 @@ add_executable(liteTestCuda liteTestCuda.c)
 set_target_properties(liteTestCuda PROPERTIES LANGUAGE CUDA LINKER_LANGUAGE CUDA)
 target_link_libraries(liteTestCuda PRIVATE egadslite)
 
-install(FILES ../include/egads.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${EG_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(TARGETS egadslite LIBRARY)
 install(TARGETS liteTestCuda RUNTIME)
