@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-project(cmake_and_cuda LANGUAGES CXX CUDA)
+project(egadslitecuda LANGUAGES CXX C CUDA)
  
 include(CTest)
 
@@ -50,6 +50,6 @@ target_include_directories(egadslite PUBLIC
 set_target_properties(egadslite PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_compile_definitions(egadslite PUBLIC REVISION=7.5)
  
-add_executable(liteTest liteTest.c)
-set_target_properties(liteTest PROPERTIES LANGUAGE CXX LINKER_LANGUAGE CXX)
-target_link_libraries(liteTest PRIVATE egadslite)
+add_executable(liteTestCuda liteTestCuda.c)
+set_target_properties(liteTestCuda PROPERTIES LANGUAGE CUDA LINKER_LANGUAGE CUDA)
+target_link_libraries(liteTestCuda PRIVATE egadslite)
