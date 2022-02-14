@@ -15,8 +15,8 @@ module load gcc mpich cmake cuda/10.2
 ### configure and build
 
 ``
-cmake -S ./egads/lite/ -B buildEGLcuda -DCMAKE_CUDA_ARCHITECTURES=75
-cmake --build buildEGLcuda -j8
+cmake -S ./egads/lite/ -B buildEGLcuda -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_INSTALL_PREFIX=$PWD/buildEGLcuda
+cmake --build buildEGLcuda --target install -j8
 ```
 
 ## Makefile build
