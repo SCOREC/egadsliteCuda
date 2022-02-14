@@ -2,6 +2,23 @@
 
 Makefile based build processes are described below.
 
+## CMake build (recommended)
+
+### setup your environment
+
+On SCOREC RHEL7 one possible configuration is:
+
+```
+module load gcc mpich cmake cuda/10.2
+```
+
+### configure and build
+
+``
+cmake -S ./egads/lite/ -B buildEGLcuda -DCMAKE_CUDA_ARCHITECTURES=75
+cmake --build buildEGLcuda -j8
+```
+
 ## Makefile build
 
 ### setup your environment
