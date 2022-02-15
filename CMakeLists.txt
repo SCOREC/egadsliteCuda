@@ -49,8 +49,8 @@ add_library(egadslite ${ALL_SOURCES})
 target_include_directories(egadslite PRIVATE lite src util util/uvmap)
  
 # We need to explicitly state that we need all CUDA files in the 
-# particle library to be built with -dc as the member functions 
-# could be called by other libraries and executables
+# particle library to be built with -dc (equivalent to -rdc=true) as the 
+# member functions could be called by other libraries and executables
 set_target_properties(egadslite PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_compile_definitions(egadslite PUBLIC REVISION=7.5)
  
