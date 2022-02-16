@@ -85,13 +85,11 @@ do {                                                                           \
     if (EGADS_SUCCESS == status && NULL != strings_d) {                        \
       MEMCPY_DEVICE_TO_HOST(&string_d, &(strings_d[1]), sizeof(char*));        \
       if (EGADS_SUCCESS == status && NULL != string_d) {                       \
-        DEVICE_FREE(string_d);                                                 \
         if (EGADS_SUCCESS != status) break;                                    \
       }                                                                        \
       STRDUP_HOST_TO_DEVICE(&(string_d), cntx->signature[1]);                  \
       MEMCPY_DEVICE_TO_HOST(&string_d, &(strings_d[0]), sizeof(char*));        \
       if (EGADS_SUCCESS == status && NULL != string_d) {                       \
-        DEVICE_FREE(string_d);                                                 \
         if (EGADS_SUCCESS != status) break;                                    \
       }                                                                        \
       STRDUP_HOST_TO_DEVICE(&(string_d), cntx->signature[0]);                  \
