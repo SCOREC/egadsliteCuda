@@ -3100,7 +3100,7 @@ EG_inTriExact(double *t1, double *t2, double *t3, double *p, double *w)
 #define EXTERN_FUNC extern
 #endif
 
-EXTERN_FUNC int
+__HOST_AND_DEVICE__ int
 EG_baryFrame(egTess2D *tess2d)
 {
   int    i, j, i0, i1, i2, cls;
