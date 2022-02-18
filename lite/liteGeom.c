@@ -441,8 +441,10 @@ EG_getRangeSurface(const egObject *geomx, double *range, int *periodic)
   const egObject *geom;
   
   geom = geomx;
+  printf("EG_getRangSurface 1.0\n");
   
 surRecurse:
+  printf("EG_getRangSurface 1.1\n");
   stat  = EGADS_NOTFOUND;
   lgeom = (liteGeometry *) geom->blind;
   mtype = geom->mtype;
@@ -454,6 +456,7 @@ surRecurse:
     lgeom = (liteGeometry *) ref->blind;
     mtype = ref->mtype;
   }
+  printf("EG_getRangSurface 1.2\n");
   switch (mtype) {
     case PLANE:
       range[0]  = -2.e100;
@@ -552,6 +555,7 @@ surRecurse:
     range[2] = lface->vrange[0];
     range[3] = lface->vrange[1];
   }
+  printf("EG_getRangSurface 2.0 return\n");
   
   return stat;
 }
@@ -560,6 +564,7 @@ surRecurse:
 __HOST_AND_DEVICE__ int
 EG_getRangX(const egObject *geom, double *range, int *periodic)
 {
+  printf("EG_getRangX 1.0\n");
   *periodic = 0;
   if  (geom == NULL)               return EGADS_NULLOBJ;
   if  (geom->magicnumber != MAGIC) return EGADS_NOTOBJ;
@@ -569,9 +574,14 @@ EG_getRangX(const egObject *geom, double *range, int *periodic)
                                    return EGADS_NOTGEOM;
   if (geom->blind == NULL)         return EGADS_NODATA;
   
+  printf("EG_getRangX 1.1\n");
   if ((geom->oclass == SURFACE) || (geom->oclass == FACE)) {
-    return EG_getRangeSurface(geom, range, periodic);
+    printf("EG_getRangX 1.2\n");
+    int ret = EG_getRangeSurface(geom, range, periodic);
+    printf("EG_getRangX 1.21 return\n");
+    return ret;
   } else {
+    printf("EG_getRangX 1.3\n");
     return EG_getRangeCurve(geom, range, periodic);
   }
 }
@@ -869,17 +879,22 @@ EG_getRangX(const egObject *geom, double *range, int *periodic)
 __HOST_AND_DEVICE__ int
 EG_getRange(const egObject *geom, double *range, int *periodic)
 {
+  printf("EG_getRange 1.0\n");
   *periodic = 0;
   if  (geom == NULL)               return EGADS_NULLOBJ;
   if  (geom->magicnumber != MAGIC) return EGADS_NOTOBJ;
   if  (geom->blind == NULL)        return EGADS_NODATA;
   if ((geom->oclass == EEDGE)  ||
       (geom->oclass == EFACE))     return EG_getERange(geom, range, periodic);
+  printf("EG_getRange 1.1\n");
   if ((geom->oclass != PCURVE) &&
       (geom->oclass != CURVE)  && (geom->oclass != SURFACE) &&
       (geom->oclass != EDGE)   && (geom->oclass != FACE))
                                    return EGADS_NOTGEOM;
-  return EG_getRangX(geom, range, periodic);
+  printf("EG_getRange 1.2\n");
+  int ret = EG_getRangX(geom, range, periodic);
+  printf("EG_getRange 1.3 return\n");
+  return ret;
 }
 
 
@@ -887,11 +902,13 @@ __HOST_AND_DEVICE__ int
 EG_evaluatX(const egObject *geom, /*@null@*/ const double *param,
             double *result)
 {
+  printf("EG_getRangeX 1.0\n");
   const egObject *ref;
   liteNode       *lnode;
   liteEdge       *ledge;
   liteFace       *lface;
 
+  printf("EG_getRangeX 1.1\n");
   if  (geom == NULL)               return EGADS_NULLOBJ;
   if  (geom->magicnumber != MAGIC) return EGADS_NOTOBJ;
   if ((geom->oclass != NODE)  && (geom->oclass != PCURVE)  &&
@@ -899,9 +916,11 @@ EG_evaluatX(const egObject *geom, /*@null@*/ const double *param,
       (geom->oclass != EDGE)  && (geom->oclass != FACE))
                                    return EGADS_NOTGEOM;
   if  (geom->blind == NULL)        return EGADS_NODATA;
+  printf("EG_getRangeX 1.2\n");
   
   /* special Node section */
   if (geom->oclass == NODE) {
+    printf("EG_getRangeX 1.3\n");
     lnode     = (liteNode *) geom->blind;
     result[0] = lnode->xyz[0];
     result[1] = lnode->xyz[1];
@@ -910,10 +929,12 @@ EG_evaluatX(const egObject *geom, /*@null@*/ const double *param,
   }
   if (param == NULL)               return EGADS_NODATA;
   
+  printf("EG_getRangeX 1.4\n");
   /* geometry */
   if ((geom->oclass == PCURVE) || (geom->oclass == CURVE) ||
       (geom->oclass == SURFACE)) return EG_evaluateGeom(geom, param, result);
 
+  printf("EG_getRangeX 1.5\n");
   /* topology */
   if (geom->oclass == EDGE) {
     ledge = (liteEdge *) geom->blind;
@@ -923,8 +944,10 @@ EG_evaluatX(const egObject *geom, /*@null@*/ const double *param,
     ref   = lface->surface;
   }
   
+  printf("EG_getRangeX 1.6\n");
   if (ref == NULL)        return EGADS_NULLOBJ;
   if (ref->blind == NULL) return EGADS_NODATA;
+  printf("EG_getRangeX 1.7\n");
   return EG_evaluateGeom(ref, param, result);
 }
 
@@ -968,6 +991,7 @@ EG_invEvaLimits(const egObject *geom, /*@null@*/ const double *limits,
       (geom->oclass != EDGE)   && (geom->oclass != FACE))
                                    return EGADS_NOTGEOM;
   if (geom->blind == NULL)         return EGADS_NODATA;
+  printf("invEvaLimits 1.0\n");
   
   if ((geom->oclass == PCURVE) || (geom->oclass == CURVE) ||
       (geom->oclass == SURFACE))
@@ -975,6 +999,7 @@ EG_invEvaLimits(const egObject *geom, /*@null@*/ const double *limits,
   
   stat = EG_getRange(geom, range, &per);
   if (stat != EGADS_SUCCESS) return stat;
+  printf("invEvaLimits 1.1\n");
   
   /* do we re-limit? */
   if (limits != NULL) {
@@ -993,6 +1018,7 @@ EG_invEvaLimits(const egObject *geom, /*@null@*/ const double *limits,
     if (ref->blind == NULL) return EGADS_NODATA;
     return EG_invEvaGeomLimits(ref, range, xyz, param, 0.0, result);
   }
+  printf("invEvaLimits 1.2\n");
 
   /* do the Face */
   pface = (liteFace *) geom->blind;
@@ -1006,11 +1032,15 @@ EG_invEvaLimits(const egObject *geom, /*@null@*/ const double *limits,
     if (ref->mtype == TRIMMED)
       printf(" EGADSlite Internal: TRIMMED TRIMMED Surface!\n");
   }
+  printf("invEvaLimits 1.21\n");
   stat = EG_invEvaGeomLimits(ref, range, xyz, param, pface->tol, result);
+  printf("invEvaLimits 1.22\n");
   if (stat != EGADS_SUCCESS) return stat;
+  printf("invEvaLimits 1.3\n");
   
   stat = EG_getRange(ref, srange, &per);
   if (stat != EGADS_SUCCESS) return stat;
+  printf("invEvaLimits 1.4\n");
 
   stat = EG_inFaceX(geom, param, pt, uvs);
   if (stat < EGADS_SUCCESS) return stat;
@@ -1042,6 +1072,7 @@ EG_invEvaLimits(const egObject *geom, /*@null@*/ const double *limits,
         }
     }
   }
+  printf("invEvaLimits 1.5\n");
 
   return EGADS_SUCCESS;
 }
@@ -1057,12 +1088,18 @@ EG_invEvaluatX(const egObject *geom, double *xyz, double *param, double *result)
 __HOST_AND_DEVICE__ int
 EG_invEvaluate(const egObject *geom, double *xyz, double *param, double *result)
 {
+  int isEdge = (geom->oclass == EEDGE);
+  int isFace = (geom->oclass == EFACE);
+  printf("invEval 0.1 %d isEdge %d isFace %d\n", geom->oclass, isEdge, isFace);
   if  (geom == NULL)               return EGADS_NULLOBJ;
   if  (geom->magicnumber != MAGIC) return EGADS_NOTOBJ;
   if  (geom->blind == NULL)        return EGADS_NODATA;
-  if ((geom->oclass == EEDGE) || (geom->oclass == EFACE))
+  if ((geom->oclass == EEDGE) || (geom->oclass == EFACE)) { //loop types
+    printf("invEval 0.5\n");
     return EG_invEEvaluate(geom, xyz, param, result);
+  }
 
+  printf("invEval 0.6\n");
   return EG_invEvaLimits(geom, NULL, xyz, param, result);
 }
 

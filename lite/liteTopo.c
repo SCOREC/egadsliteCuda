@@ -81,15 +81,18 @@ EG_getTopology(const egObject *topo, egObject **geom, int *oclass,
   *nChildren = 0;
   *children  = NULL;
   *senses    = NULL;
+  printf("---2.0\n");
   if (topo == NULL)               return EGADS_NULLOBJ;
   if (topo->magicnumber != MAGIC) return EGADS_NOTOBJ;
   if (topo->oclass > MODEL)       return EG_getETopology(topo, geom, oclass,
                                                          type, limits, nChildren,
                                                          children, senses);
+  printf("2.1\n");
   if (topo->oclass < NODE)        return EGADS_NOTTOPO;
   *oclass = topo->oclass;
   *type   = topo->mtype;
   
+  printf("2.2\n");
   if (topo->oclass == NODE) {
     liteNode *pnode;
     pnode = (liteNode *) topo->blind;
@@ -166,6 +169,7 @@ EG_getTopology(const egObject *topo, egObject **geom, int *oclass,
     }
   }
   
+  printf("2.3\n");
   return EGADS_SUCCESS;
 }
 

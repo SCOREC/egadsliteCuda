@@ -48,12 +48,13 @@ printf("allocating new strings\n");\
     char **strings_d;                                                          \
     DEVICE_MALLOC(&strings_d, 2*sizeof(char*));                                \
     if (NULL == strings_d) {                                                   \
+printf("malloc error strings_d\n");\
       DEVICE_FREE(*(cntxaddr));                                                \
       break;                                                                   \
     }                                                                          \
 printf("copying strings\n");\
     MEMCPY_HOST_TO_DEVICE(&((*(cntxaddr))->signature), &strings_d, sizeof(char**));\
-printf("have new context\n");\
+printf("have new context, strings_d addy %p\n", strings_d);\
   }                                                                            \
 } while(0)
 
@@ -79,26 +80,41 @@ do {                                                                           \
   void *nil = NULL;                                                            \
   MEMCPY_DEVICE_TO_HOST(&strings_d, &(cntx_d->signature), sizeof(char**));     \
   if (EGADS_SUCCESS != status) break;                                          \
+printf("0.1 %p\n", strings_d);\
   MEMCPY_HOST_TO_DEVICE(cntx_d, cntx, sizeof(egCntxt));                        \
   if (EGADS_SUCCESS == status) {                                               \
+printf("0.2\n");\
     MEMCPY_HOST_TO_DEVICE(&(cntx_d->signature), &strings_d, sizeof(char**));   \
     if (EGADS_SUCCESS == status && NULL != strings_d) {                        \
+printf("0.3\n");\
       MEMCPY_DEVICE_TO_HOST(&string_d, &(strings_d[1]), sizeof(char*));        \
       if (EGADS_SUCCESS == status && NULL != string_d) {                       \
+printf("0.4\n");\
+printf("0.41\n");\
         if (EGADS_SUCCESS != status) break;                                    \
       }                                                                        \
+printf("0.43\n");\
       STRDUP_HOST_TO_DEVICE(&(string_d), cntx->signature[1]);                  \
+printf("0.5\n");\
       MEMCPY_DEVICE_TO_HOST(&string_d, &(strings_d[0]), sizeof(char*));        \
+printf("0.6\n");\
       if (EGADS_SUCCESS == status && NULL != string_d) {                       \
+printf("0.7\n");\
         if (EGADS_SUCCESS != status) break;                                    \
       }                                                                        \
       STRDUP_HOST_TO_DEVICE(&(string_d), cntx->signature[0]);                  \
+printf("0.8\n");\
     }                                                                          \
   }                                                                            \
+printf("0.9\n");\
   if (EGADS_SUCCESS != status) break;                                          \
+printf("1.0\n");\
   MEMCPY_HOST_TO_DEVICE(&(cntx_d->threadID), &zero, sizeof(long));             \
+printf("1.1\n");\
   if (EGADS_SUCCESS != status) break;                                          \
+printf("1.2\n");\
   MEMCPY_HOST_TO_DEVICE(&(cntx_d->mutex), &nil, sizeof(void*));                \
+printf("1.3\n");\
 } while(0)
 
 # define EG_GET_ATTRS_PTR(attrs, attrs_d) MEMCPY_DEVICE_TO_HOST(&(attrs), &(attrs_d), sizeof(egAttrs*))

@@ -2920,6 +2920,7 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
                     const double *xyz, double *param, double toler,
                     double *result)
 {
+  printf("invEvaGeomLimits 1.0\n");
   int            i, j, ii, iii, jjj, k, stat, per, atype, ulen, vlen, cnt;
   int            jDiv, iDiv;
   double         a, b, tx, tt, period, tol, coord[3], srange[4] = {0.,0.,0.,0.};
@@ -2947,8 +2948,10 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
   if ((geom->oclass != PCURVE) && (geom->oclass != CURVE) &&
       (geom->oclass != SURFACE))   return EGADS_NOTGEOM;
   if  (geom->blind == NULL)        return EGADS_NODATA;
+  printf("invEvaGeomLimits 1.11\n");
   
-  stat = EG_getRange(geom, range, &per);
+  stat = EG_getRange(geom, range, &per); //FIXME fails here - no idea why
+  printf("invEvaGeomLimits 1.12\n"); 
   if (stat != EGADS_SUCCESS) return stat;
   srange[0] = range[0];
   srange[1] = range[1];
@@ -2956,6 +2959,7 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
     srange[2] = range[2];
     srange[3] = range[3];
   }
+  printf("invEvaGeomLimits 1.1\n");
   
   /* do we re-limit (ignore surface periodics)? */
   if (limits != NULL) {
@@ -2970,8 +2974,10 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
       }
     }
   }
+  printf("invEvaGeomLimits 1.2\n");
   
   if (geom->oclass == PCURVE) {
+    printf("invEvaGeomLimits 1.3\n");
     
     while (geom->mtype == TRIMMED) {
       lgeom = (liteGeometry *) geom->blind;
@@ -3125,6 +3131,7 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
     }
     
   } else if (geom->oclass == CURVE) {
+    printf("invEvaGeomLimits 1.4\n");
 
     while (geom->mtype == TRIMMED) {
       lgeom = (liteGeometry *) geom->blind;
@@ -3268,6 +3275,7 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
     }
 
   } else {
+    printf("invEvaGeomLimits 1.5\n");
 
     tol = toler;
     if (tol == 0.0) tol = 1.e-8;
@@ -3625,6 +3633,7 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
     
   }
   
+  printf("invEvaGeomLimits 10.0\n");
   return EGADS_SUCCESS;
 }
 

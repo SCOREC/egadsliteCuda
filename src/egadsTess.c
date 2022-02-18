@@ -5894,6 +5894,8 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
   const double *aReals;
   const char   *aStr;
 
+  printf("in EG_MakeTessBody\n");
+
   *tess = NULL;
   if  (object == NULL)               return EGADS_NULLOBJ;
   if  (object->magicnumber != MAGIC) return EGADS_NOTOBJ;
@@ -5910,6 +5912,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
     if (ebody->done == 0)            return EGADS_INDEXERR;
   }
   
+  printf("0.1\n");
   /* get global settings */
   ignore = 0;
   if (paramx[1] < 0.0) ignore = 1;
@@ -5923,6 +5926,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
         if ((rparm[i] < params[i]) && (rparm[i] > 0.0)) params[i] = rparm[i];
   }
   
+  printf("0.2\n");
   /* get quadding parameters, if any */
   aStat = EG_attrRet3R(object, ".qParams", rparm);
   
@@ -5951,6 +5955,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
     for (i = 0; i < MTESSPARAM; i++) btess->tparam[i] = cntx->tess[i];
   
   /* do the Edges & make the Tessellation Object */
+  printf("0.3\n");
   
   stat = EG_tessEdges(btess, ignore, NULL);
   if (stat != EGADS_SUCCESS) {
@@ -5970,6 +5975,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
   EG_referenceTopObj(object, ttess);
   *tess = ttess;
   
+  printf("0.4\n");
   /* Wire Body or Edges Only */
   if ((object->mtype == WIREBODY) || (paramx[0] < 0.0)) return EGADS_SUCCESS;
 
@@ -6015,6 +6021,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
   }
   btess->nFace = nface;
   
+  printf("0.5\n");
   /* set up for explicit multithreading */
   tthread.mutex     = NULL;
   tthread.master    = EMP_ThreadID();
@@ -6042,6 +6049,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
   if (outLevel > 1) printf(" EMP NumProcs = %d!\n", np);
   if (nface < np) np = nface;
   
+  printf("0.6\n");
   if (np > 1) {
     /* create the mutex to handle list synchronization */
     tthread.mutex = EMP_LockCreate();
@@ -6058,6 +6066,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
     }
   }
 
+  printf("0.7\n");
   /* create the threads and get going! */
   if (threads != NULL)
     for (i = 0; i < np-1; i++) {
@@ -6079,6 +6088,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
   EG_checkTriangulation(btess);
 #endif
 
+  printf("0.7\n");
   /* cleanup */
   if (threads != NULL)
     for (i = 0; i < np-1; i++)
@@ -6100,6 +6110,7 @@ EG_makeTessBody(egObject *object, double *paramx, egObject **tess)
       }
     if (i != 0) printf("\n");
   }
+  printf("0.8\n");
 
 #ifndef LITE
   for (i = j = 0; j < nface; j++)
