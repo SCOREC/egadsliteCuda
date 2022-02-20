@@ -3581,7 +3581,9 @@ EG_invEvaGeomLimits(const egObject *geomx, /*@null@*/ const double *limits,
       }
       uvs[0] = param[0];
       uvs[1] = param[1];
-      stat   = EG_nearestOnSurface(geom, xyz, param, result);
+      printf("xyz %.3f %.3f %.3f param %.3f %.3f\n", xyz[0], xyz[1], xyz[2], param[0], param[1]);
+      stat   = EG_nearestOnSurface(geom, xyz, param, result); //HERE
+      printf("result %.3f %.3f %.3f param %.3f %.3f\n", result[0], result[1], result[2], param[0], param[1]);
       a      = (result[0]-xyz[0])*(result[0]-xyz[0]) +
                (result[1]-xyz[1])*(result[1]-xyz[1]) +
                (result[2]-xyz[2])*(result[2]-xyz[2]);
