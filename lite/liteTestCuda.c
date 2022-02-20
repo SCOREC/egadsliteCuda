@@ -11,6 +11,7 @@
 
 #include "egads.h"
 #include <assert.h>
+#include <cuda.h>
 
 #ifdef WIN32
 #define LONG long long
@@ -597,6 +598,17 @@ int main(int argc, char *argv[])
   printf(" EG_loadModel     = %d  %s\n", EG_loadModel(context, 0, argv[1],
                                                       &model), argv[1]);
 #ifdef __NVCC__
+  size_t stackLimit;
+  cuCtxGetLimit(&stackLimit, CU_LIMIT_STACK_SIZE);
+  checkCudaError(__LINE__);
+  printf("original stack limit %d\n", stackLimit);
+  stackLimit=8*1024;
+  cuCtxSetLimit(CU_LIMIT_STACK_SIZE,stackLimit);
+  checkCudaError(__LINE__);
+  cuCtxGetLimit(&stackLimit, CU_LIMIT_STACK_SIZE);
+  checkCudaError(__LINE__);
+  printf("new stack limit %d\n", stackLimit);
+  printf("stack limit %d\n", stackLimit);
   getTopo_d<<<1,1>>>(context, model);
   checkCudaError(__LINE__);
   ptEval<<<1,1>>>(context, model);
