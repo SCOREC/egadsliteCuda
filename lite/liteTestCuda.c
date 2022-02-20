@@ -439,6 +439,14 @@ __global__ void ptEval(ego context, ego model) {
         assert(stat == EGADS_SUCCESS);
         printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
         }
+        {
+        //CoG as reported by ESP vGeom utility
+        double pt[3] = {0.575587, 0.575587, 0.66667};
+        double clPt[3] = {0.575587, 0.575587, 0.66667};
+        stat = EG_invEvaluate(egFace, pt, ignored, clPt);
+        assert(stat == EGADS_SUCCESS);
+        printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
+        }
       }
     }
     EG_free(faces);
