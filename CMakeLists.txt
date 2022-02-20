@@ -55,7 +55,8 @@ set_target_properties(egadslite PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_compile_definitions(egadslite PUBLIC REVISION=7.5)
  
 add_executable(liteTestCuda lite/liteTestCuda.c)
-set_target_properties(liteTestCuda PROPERTIES LANGUAGE CUDA LINKER_LANGUAGE CUDA)
+set_source_files_properties(lite/liteTestCuda.c PROPERTIES LANGUAGE CUDA)
+set_target_properties(liteTestCuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_link_libraries(liteTestCuda PRIVATE egadslite)
 
 install(FILES ${EG_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

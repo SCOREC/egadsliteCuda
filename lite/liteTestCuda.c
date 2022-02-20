@@ -396,6 +396,44 @@ parseOut(int level, ego object, /*@null@*/ ego body, int sense)
 }
 
 #ifdef __CUDACC__
+__global__ void ptEval(ego context, ego model) {
+  //class_id 5 class_dim 2 oclass 23 isEdge 0 isFace 1 pt 0.750 0.750 0.500 clPt //1.000 1.000 0.000
+  const int mymagic = model->magicnumber;
+  printf("cuda topo magicnum %d magic %d\n", mymagic, MAGIC);
+  ego geom, *bodies;
+  int oclass, mtype, nbodies, *senses;
+  int stat = EG_getTopology(model, &geom, &oclass, &mtype, NULL, &nbodies, &bodies, &senses);
+  assert(stat == EGADS_SUCCESS);
+  printf("stat %d oclass %d mtype %d nbodies %d\n", stat, oclass, mtype, nbodies);
+  for (int i = 0; i < nbodies; i++) {
+    int n, j;
+    ego *faces;
+    stat = EG_getBodyTopos(bodies[i], NULL, FACE, &n, &faces);
+    assert(stat == EGADS_SUCCESS);
+    for (j = 0; j < n; j++) {
+      int k = EG_indexBodyTopo(bodies[i], faces[j]);
+      assert(k==j+1);
+      ego egFace = faces[j];
+      assert(egFace->oclass == FACE);
+      if(k==5) {
+        double ignored[3] = {0, 0, 0};
+        double pt[3] = {0.75, 0.75, 0};
+        double clPt[3] = {0.75, 0.75, 0};
+        printf("before\n");
+        stat = EG_invEvaluate(egFace, pt, ignored, clPt);
+        //double tol=1e-9;
+        //double res[3];
+        //stat = EG_invEvaGeomLimits(egFace, NULL, pt, ignored, tol, res);
+        assert(stat == EGADS_SUCCESS);
+        printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
+      }
+    }
+    EG_free(faces);
+  }
+}
+
+
+
 __global__ void getTopo_d(ego context, ego model) {
   const int mymagic = model->magicnumber;
   printf("cuda topo magicnum %d magic %d\n", mymagic, MAGIC);
@@ -560,6 +598,8 @@ int main(int argc, char *argv[])
                                                       &model), argv[1]);
 #ifdef __NVCC__
   getTopo_d<<<1,1>>>(context, model);
+  checkCudaError(__LINE__);
+  ptEval<<<1,1>>>(context, model);
   checkCudaError(__LINE__);
   printf("done getTopo\n");
   return 0;
