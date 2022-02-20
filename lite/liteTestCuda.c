@@ -420,13 +420,25 @@ __global__ void ptEval(ego context, ego model) {
         double ignored[3] = {0, 0, 0};
         double pt[3] = {0.75, 0.75, 0};
         double clPt[3] = {0.75, 0.75, 0};
-        printf("before\n");
         stat = EG_invEvaluate(egFace, pt, ignored, clPt);
-        //double tol=1e-9;
-        //double res[3];
-        //stat = EG_invEvaGeomLimits(egFace, NULL, pt, ignored, tol, res);
         assert(stat == EGADS_SUCCESS);
         printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
+
+        {
+        double pt[3] = {0.0, 0.0, 0.0};
+        double clPt[3] = {0.0, 0.0, 0};
+        stat = EG_invEvaluate(egFace, pt, ignored, clPt);
+        assert(stat == EGADS_SUCCESS);
+        printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
+        }
+
+        {
+        double pt[3] = {0.25, 0.25, 0.25};
+        double clPt[3] = {0.25, 0.25, 0.25};
+        stat = EG_invEvaluate(egFace, pt, ignored, clPt);
+        assert(stat == EGADS_SUCCESS);
+        printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
+        }
       }
     }
     EG_free(faces);
