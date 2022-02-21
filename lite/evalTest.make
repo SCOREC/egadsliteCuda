@@ -1,5 +1,5 @@
 #
-IDIR = $(ESP_ROOT)/src/EGADS/include
+IDIR = $(ESP_ROOT)/include
 include $(IDIR)/$(ESP_ARCH)
 LDIR = $(ESP_ROOT)/lib
 ifdef ESP_BLOC
