@@ -418,9 +418,8 @@ __global__ void ptEval(ego context, ego model) {
       assert(egFace->oclass == FACE);
       if(k==5) {
         double ignored[3] = {0, 0, 0};
-        double pt[3] = {0.75, 0.75, 0};
-        double clPt[3] = {0.75, 0.75, 0};
-        printf("before\n");
+        double pt[3] = {0.75, 0.75, 0.5};
+        double clPt[3] = {0.75, 0.75, 0.5};
         stat = EG_invEvaluate(egFace, pt, ignored, clPt);
         //double tol=1e-9;
         //double res[3];
