@@ -39,8 +39,8 @@ void ptEval(ego context, ego model) {
       assert(egFace->oclass == FACE);
       if(k==5) {
         double ignored[3] = {0, 0, 0};
-        double pt[3] = {0.75, 0.75, 0};
-        double clPt[3] = {0.75, 0.75, 0};
+        double pt[3] = {0.75, 0.75, 0.5};
+        double clPt[3] = {0.75, 0.75, 0.5};
         stat = EG_invEvaluate(egFace, pt, ignored, clPt);
         assert(stat == EGADS_SUCCESS);
         printf("clPt %.3f %.3f %.3f\n", clPt[0], clPt[1], clPt[2]);
