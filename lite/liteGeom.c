@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 #include "egadsTypes.h"
 #include "egadsInternals.h"
@@ -439,6 +440,7 @@ EG_getRangeSurface(const egObject *geomx, double *range, int *periodic)
   liteFace       *lface;
   liteGeometry   *lgeom;
   const egObject *geom;
+  int depth = 0;
   
   geom = geomx;
   
@@ -519,6 +521,7 @@ surRecurse:
       
     case TRIMMED:
       geom = lgeom->ref;
+      depth++;
       goto surRecurse;
       
     case BEZIER:
@@ -542,6 +545,7 @@ surRecurse:
       
     case OFFSET:
       geom = lgeom->ref;
+      depth++;
       goto surRecurse;
 
   }
@@ -551,6 +555,16 @@ surRecurse:
     range[1] = lface->urange[1];
     range[2] = lface->vrange[0];
     range[3] = lface->vrange[1];
+  }
+  if(geom != geomx) {
+    assert(depth==1);
+    if (geomx->oclass == FACE) {
+      lface = (liteFace *) geomx->blind;
+      range[0] = lface->urange[0];
+      range[1] = lface->urange[1];
+      range[2] = lface->vrange[0];
+      range[3] = lface->vrange[1];
+    }
   }
   
   return stat;
