@@ -14,12 +14,13 @@ module load gcc mpich cmake cuda/10.2
 
 ### configure and build
 
-``
+```
 cmake -S ./egads -B buildEGLcuda -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_INSTALL_PREFIX=$PWD/buildEGLcuda/install
 cmake --build buildEGLcuda --target install -j8
 ```
 
 #### debug build
+
 ```
 cmake -S ./egads -B buildEGLcudaDbg -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CUDA_FLAGS_DEBUG="-g -G" -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_INSTALL_PREFIX=$PWD/buildEGLcudaDbg/install
 cmake --build buildEGLcudaDbg --target install -j8
